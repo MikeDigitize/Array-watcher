@@ -62,15 +62,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	/*
+		Click
+	*/
+
 	var container = document.querySelector('.container');
 	var start = document.querySelector('#start');
 	var stop = document.querySelector('#stop');
+
 	var count = 0;
 	var isListening = false;
 
 	var listener = {
 		next: function next(value, target) {
-			console.log(value, target);
+			console.log('hi', value, target);
 		},
 		error: function error(err) {
 			console.warn('Error: ', err);
@@ -110,10 +115,50 @@ return /******/ (function(modules) { // webpackBootstrap
 		stop: stopListening
 	};
 
-	var stream = _xstream2.default.create(producer);
-
 	start.addEventListener('click', producer.start);
 	stop.addEventListener('click', producer.stop);
+
+	var stream = _xstream2.default.create(producer);
+
+	/*
+		Promise
+	*/
+
+	var listener2 = {
+		next: function next(value) {
+			console.log(value);
+		},
+		error: function error(err) {
+			console.warn('Number below 5: ', err);
+			if (err >= 3) {
+				console.log('try again');
+				this.complete();
+			} else {
+				console.log('it\'s all over');
+			}
+		},
+		complete: function complete() {
+			console.log('Done');
+			stream2 = _xstream2.default.from(timer());
+			stream2.addListener(listener2);
+		}
+	};
+
+	function timer() {
+		return new Promise(function (res, rej) {
+			setTimeout(function () {
+				var random = Math.floor(Math.random() * 10) + 1;
+				if (random > 5) {
+					res({ 'greet': 'yo', 'target': 'mama' });
+				} else {
+					rej(random);
+				}
+			}, 1000);
+		});
+	}
+
+	var stream2 = _xstream2.default.from(timer());
+	stream2.addListener(listener2);
 
 /***/ },
 /* 1 */
