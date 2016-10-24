@@ -5,27 +5,31 @@
 </head>
 <body>
 
-	<p id="counter">120</p>
+	<p id="counter">0</p>
 	<button id="increment">+</button>
 	<button id="decrement">-</button>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 
 		var counter = document.querySelector('#counter');
-		var increment = document.querySelector('#increment');
-		var decrement = document.querySelector('#decrement');
-		var counterValue = Number(counter.textContent);
+		// var increment = document.querySelector('#increment');
+		// var decrement = document.querySelector('#decrement');
+		// var counterValue = Number(counter.textContent);
 
-		function incrementCounter() {
-			counter.textContent = ++counterValue;
-		}
+		// function incrementCounter() {
+		// 	counter.textContent = ++counterValue;
+		// }
 
-		function decrementCounter() {
-			counter.textContent = --counterValue;
-		}
+		// function decrementCounter() {
+		// 	counter.textContent = --counterValue;
+		// }
 
-		var i = AoEventListener(increment, 'click', incrementCounter);
-		var d = AoEventListener(decrement, 'click', decrementCounter);
+		// var i = AoEventListener(increment, 'click', incrementCounter);
+		// var d = AoEventListener(decrement, 'click', decrementCounter);
+
+		var mm = primitiveAddListener(document.body, 'mousemove', function(evt) {
+			counter.textContent = evt.clientX;
+		});
 
 	</script>
 </body>

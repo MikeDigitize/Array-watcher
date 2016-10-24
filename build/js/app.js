@@ -59,7 +59,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports.AoEventListener = AoEventListener;
+	exports.primitiveAddListener = primitiveAddListener;
 
 	var _xstream = __webpack_require__(1);
 
@@ -67,65 +67,103 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	function AoEventListener(el, evt, callback) {
+	// export function AoEventListener(el, evt, callback) {
+
+	// 	el = typeof el === 'string' ? document.querySelector(el) : el;
+
+	// 	let isListening = false;
+
+	// 	let listener = {
+	// 	  next: evt => callback.call(el, evt),
+	// 	  error: err => console.warn('Error: ', err),
+	// 	  complete: () => el.removeEventListener(evt, listener.next)
+	// 	};
+
+	// 	let producer = {
+	// 	  start : startListening,
+	// 	  stop : stopListening
+	// 	};
+
+	// 	function startListening() {
+	// 		if(!isListening) {
+	// 			el.addEventListener(evt, listener.next);
+	// 			stream.addListener(listener);
+	// 			isListening = true;
+	// 		}
+	// 		else {
+	// 			listener.error('AoClick is already listening');
+	// 		}
+	// 	}
+
+	// 	function stopListening() {
+	// 		if(isListening) {
+	// 			stream.removeListener(listener);
+	// 			listener.complete();
+	// 			isListening = false;
+	// 		}
+	// 		else {
+	// 			listener.error('AoClick is not yet listening');
+	// 		}
+	// 	}
+
+	// 	if(!(el instanceof HTMLElement)) {
+	// 		listener.error('The first argument should be a CSS selector or HTML Element');
+	// 	}
+
+	// 	if(typeof evt !== 'string') {
+	// 		listener.error('The second argument should be a DOM event');
+	// 	}
+
+	// 	if(typeof callback !== 'function') {
+	// 		listener.error('The third argument should be a callback function');
+	// 	}
+
+	// 	let { start, stop } = producer;
+	// 	let stream = xs.create(producer);
+
+	// 	return { start, stop };
+
+	// }
+
+	function primitiveAddListener(el, evt, fn) {
 
 		el = typeof el === 'string' ? document.querySelector(el) : el;
 
 		var isListening = false;
 
-		var listener = {
-			next: function next(evt) {
-				return callback.call(el, evt);
-			},
-			error: function error(err) {
-				return console.warn('Error: ', err);
-			},
-			complete: function complete() {
-				return el.removeEventListener(evt, listener.next);
-			}
-		};
-
-		var producer = {
-			start: startListening,
-			stop: stopListening
-		};
-
-		function startListening() {
+		function start() {
 			if (!isListening) {
-				el.addEventListener(evt, listener.next);
-				stream.addListener(listener);
 				isListening = true;
+				el.addEventListener(evt, fn);
 			} else {
-				listener.error('AoClick is already listening');
+				error('Listener already initiliased');
 			}
 		}
 
-		function stopListening() {
+		function stop() {
 			if (isListening) {
-				stream.removeListener(listener);
-				listener.complete();
 				isListening = false;
+				el.removeEventListener(evt, fn);
 			} else {
-				listener.error('AoClick is not yet listening');
+				error('Listener not yet initiliased');
 			}
+		}
+
+		function error(err) {
+			return console.warn(err);
 		}
 
 		if (!(el instanceof HTMLElement)) {
-			listener.error('The first argument should be a CSS selector or HTML Element');
+			error('The first argument should be a CSS selector or HTML Element');
 		}
 
 		if (typeof evt !== 'string') {
-			listener.error('The second argument should be a DOM event');
+			error('The second argument should be a DOM event');
 		}
 
-		if (typeof callback !== 'function') {
-			listener.error('The third argument should be a callback function');
+		if (typeof fn !== 'function') {
+			error('The third argument should be a callback function');
 		}
-
-		var start = producer.start;
-		var stop = producer.stop;
-
-		var stream = _xstream2.default.create(producer);
 
 		return { start: start, stop: stop };
 	}
