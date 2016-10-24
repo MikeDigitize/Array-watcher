@@ -1,103 +1,59 @@
 import xs from 'xstream';
 
-/*
-	Click
-*/
+export function AoEventListener(el, evt, callback) {
 
-let container = document.querySelector('.container');
-let start = document.querySelector('#start');
-let stop = document.querySelector('#stop');
+	el = typeof el === 'string' ? document.querySelector(el) : el;
 
-let count = 0;
-let isListening = false;
+	let isListening = false;
 
-let listener = {
-  next: (value, target) => {
-    console.log('hi', value, target);
-  },
-  error: err => {
-    console.warn('Error: ', err);
-  },
-  complete: () => {
-    console.log('Done');
-  }
-};
+	let listener = {
+	  next: evt => callback.call(el, evt),
+	  error: err => console.warn('Error: ', err),
+	  complete: () => el.removeEventListener(evt, listener.next)
+	};
 
-function increment(evt) {
-	listener.next(++count, evt.target);
-}
+	let producer = {
+	  start : startListening,
+	  stop : stopListening
+	};
 
-function startListening() {
-	if(!isListening) {
-		container.addEventListener('click', increment);
-		stream.addListener(listener);
-		isListening = true;
+	function startListening() {
+		if(!isListening) {
+			el.addEventListener(evt, listener.next);
+			stream.addListener(listener);
+			isListening = true;
+		}
+		else {
+			listener.error('AoClick is already listening');
+		}
 	}
-	else {
-		listener.error('listener already initialised');
+
+	function stopListening() {
+		if(isListening) {
+			stream.removeListener(listener);
+			listener.complete();
+			isListening = false;
+		}
+		else {
+			listener.error('AoClick is not yet listening');
+		}
 	}
-}
 
-function stopListening() {
-	if(isListening) {
-		container.removeEventListener('click', increment);
-		listener.complete();
-		stream.removeListener(listener);
-		isListening = false;
+	if(!(el instanceof HTMLElement)) {
+		listener.error('The first argument should be a CSS selector or HTML Element');
 	}
-	else {
-		listener.error('listener not yet initialised');
-	}	
+
+	if(typeof evt !== 'string') {
+		listener.error('The second argument should be a DOM event');
+	}
+
+	if(typeof callback !== 'function') {
+		listener.error('The third argument should be a callback function');
+	}
+
+	let { start, stop } = producer;
+	let stream = xs.create(producer);
+
+	return { start, stop };
+
 }
-
-let producer = {
-  start : startListening,
-  stop : stopListening
-};
-
-start.addEventListener('click', producer.start);
-stop.addEventListener('click', producer.stop);
-
-let stream = xs.create(producer);
-
-/*
-	Promise
-*/
-
-let listener2 = {
-  next: (value) => {
-    console.log(value);
-  },
-  error: function(err) {
-    console.warn('Number below 5: ', err);
-    if(err >= 3) {
-    	console.log('try again')
-    	this.complete();
-    }
-    else {
-    	console.log('it\'s all over');
-    }
-  },
-  complete: function() {
-    console.log('Done');
-    stream2 = xs.from(timer());
-    stream2.addListener(listener2);
-  }
-};
-
-function timer() {
-	return new Promise(function(res, rej) {
-		setTimeout(() => {
-			let random = Math.floor(Math.random() * 10) + 1;
-			if(random > 5) {
-				res({ 'greet' : 'yo', 'target' : 'mama'});
-			}
-			else {
-				rej(random);
-			}			
-		}, 1000);
-	});
-}
-
-let stream2 = xs.from(timer());
-stream2.addListener(listener2);
