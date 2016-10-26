@@ -1,34 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Streams</title>
+	<title>Array Watcher</title>
 </head>
 <body>
 
-	<p id="counter">0</p>
-	<button id="increment">+</button>
-	<button id="decrement">-</button>
 	<script type="text/javascript" src="js/app.js"></script>
 	<script type="text/javascript">
 
-		var counter = document.querySelector('#counter');
-		// var increment = document.querySelector('#increment');
-		// var decrement = document.querySelector('#decrement');
-		// var counterValue = Number(counter.textContent);
+		function log(method, evt) {
+			console.log(method, evt.type, this);
+		}
 
-		// function incrementCounter() {
-		// 	counter.textContent = ++counterValue;
-		// }
+		var arr = AoArray(14,25,33,45);
+		arr.push(85,66,47);
+		arr.watch('push', log);
+		arr.push(88,9,1000);
+		arr.watch('map', log);
+		arr.map(function(num) {
+			return num += 100;
+		});
 
-		// function decrementCounter() {
-		// 	counter.textContent = --counterValue;
-		// }
-
-		// var i = AoEventListener(increment, 'click', incrementCounter);
-		// var d = AoEventListener(decrement, 'click', decrementCounter);
-
-		var mm = primitiveAddListener(document.body, 'mousemove', function(evt) {
-			counter.textContent = evt.clientX;
+		var arr2 = AoArray({ name : 'Mike', job : 'Developer' }, { name : 'John', job : 'CEO' });
+		arr2.watch('forEach', log);
+		arr2.forEach(function(person) {
+			console.log(person);
 		});
 
 	</script>

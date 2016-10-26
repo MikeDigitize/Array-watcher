@@ -5,7 +5,7 @@ import webpack from 'webpack';
 module.exports = {
     context : path.resolve('src'),
     entry : {
-        app : 'stream.js'
+        app : 'array-watcher.js'
     },
     resolve: {
         root: path.resolve(__dirname + '/src'),
