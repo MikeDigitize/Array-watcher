@@ -1,4 +1,4 @@
-class ArrayWatcher extends Array {
+class Watcher extends Array {
 
 	watch(method, callback) {
 
@@ -7,8 +7,8 @@ class ArrayWatcher extends Array {
 		}
 
 		let eventName = `${method}-notify-${createHash()}`;
-		let pureArray = Object.keys(this).filter(key => !isNaN(Number(key))).map(key => this[key]);
-		
+		let pureArray = getPureArray(this);
+
 		this.notify[method] = {
 			eventName,
 			evt : createArrayEvent(eventName),
@@ -30,21 +30,20 @@ class ArrayWatcher extends Array {
 	}
 
 	watchAll(callback) {
-		return getArrayProps().reduce((arr, prop) => {
-			arr = this.watch(prop, callback);
-			return arr;
-		});
+		getArrayProps().forEach(prop => this.watch(prop, callback));
+		return getPureArray(this);
 	}
 
-	unwatch(method) {
+	unWatch(method) {
 		if(this.notify && this.notify[method]) {
 			window.removeEventListener(this.notify[method].eventName, this.notify[method].callback);
 		}
+		return getPureArray(this);
 	}
 
 	unWatchAll() {
-		getArrayProps().forEach(key => this.unwatch(key));
-		return Object.keys(this).filter(key => !isNaN(Number(key))).map(key => this[key]);
+		getArrayProps().forEach(key => this.unWatch(key));
+		return getPureArray(this);
 	}
 
 }
@@ -52,6 +51,10 @@ class ArrayWatcher extends Array {
 function getArrayProps() {
 	let ignore = ['length', 'constructor'];
 	return Object.getOwnPropertyNames(Array.prototype).filter(prop => ignore.indexOf(prop) === -1);
+}
+
+function getPureArray(context) {
+	return Object.keys(context).filter(key => !isNaN(Number(key))).map(key => context[key]);
 }
 
 function createArrayEvent(customType) {
@@ -71,8 +74,8 @@ function createHash() {
     return Math.random().toString(16).substr(2, 9);
 }
 
-export function AoArray (...args) {
-	let watcher = Object.create(ArrayWatcher.prototype);
+export function ArrayWatcher(...args) {
+	let watcher = Object.create(Watcher.prototype);
 	watcher.push.apply(watcher, args);
 	return watcher;
 } 
