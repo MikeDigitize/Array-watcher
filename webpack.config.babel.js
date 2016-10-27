@@ -23,6 +23,10 @@ module.exports = {
             loader: 'babel-loader'
         }]
     },
-    plugins : [],
+    plugins : [new webpack.optimize.UglifyJsPlugin({
+        compress: {
+            warnings: false
+        }
+    })],
     watch : true
 };
