@@ -6,7 +6,7 @@ class ArrayWatcher extends Array {
 			this.notify = {};
 		}
 
-		let eventName = `${method}-notify`;
+		let eventName = `${method}-notify-${createHash()}`;
 		let pureArray = Object.keys(this).filter(key => !isNaN(Number(key))).map(key => this[key]);
 		
 		this.notify[method] = {
@@ -30,7 +30,10 @@ class ArrayWatcher extends Array {
 	}
 
 	watchAll(callback) {
-		Object.getOwnPropertyNames(Array.prototype).forEach(key => this.watch(key, callback));
+		return getArrayProps().reduce((arr, prop) => {
+			arr = this.watch(prop, callback);
+			return arr;
+		});
 	}
 
 	unwatch(method) {
@@ -40,9 +43,15 @@ class ArrayWatcher extends Array {
 	}
 
 	unWatchAll() {
-		Object.getOwnPropertyNames(Array.prototype).forEach(key => this.unwatch(key));
+		getArrayProps().forEach(key => this.unwatch(key));
+		return Object.keys(this).filter(key => !isNaN(Number(key))).map(key => this[key]);
 	}
 
+}
+
+function getArrayProps() {
+	let ignore = ['length', 'constructor'];
+	return Object.getOwnPropertyNames(Array.prototype).filter(prop => ignore.indexOf(prop) === -1);
 }
 
 function createArrayEvent(customType) {
@@ -56,6 +65,10 @@ function createArrayEvent(customType) {
 		return new Event(customType);		
 	}
 
+}
+
+function createHash() {
+    return Math.random().toString(16).substr(2, 9);
 }
 
 export function AoArray (...args) {
