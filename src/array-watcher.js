@@ -30,11 +30,7 @@ class ArrayWatcher extends Array {
 	}
 
 	watchAll(callback) {
-
-		Object.getOwnPropertyNames(Array.prototype).forEach(key => {
-			this.watch(key, callback);
-		});
-
+		Object.getOwnPropertyNames(Array.prototype).forEach(key => this.watch(key, callback));
 	}
 
 	unwatch(method) {
