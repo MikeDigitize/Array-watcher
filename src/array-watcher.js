@@ -29,10 +29,22 @@ class ArrayWatcher extends Array {
 
 	}
 
+	watchAll(callback) {
+
+		Object.getOwnPropertyNames(Array.prototype).forEach(key => {
+			this.watch(key, callback);
+		});
+
+	}
+
 	unwatch(method) {
 		if(this.notify && this.notify[method]) {
 			window.removeEventListener(this.notify[method].eventName, this.notify[method].callback);
 		}
+	}
+
+	unWatchAll() {
+		Object.getOwnPropertyNames(Array.prototype).forEach(key => this.unwatch(key));
 	}
 
 }
