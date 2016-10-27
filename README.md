@@ -106,31 +106,31 @@ arr.map(dude => dude.name); // ['Mike', 'Bob', 'Dave', 'Clive']
 @type {Function}
 @param {String} method - the array method to watch
 @param {Function} callback- the function that fires upon access of the specified method
-@returns Array
+@returns {Array} the array created with ArrayWrapper
 arr.watch(method, callback);
 
 // unWatch
 @type {Function}
 @param {String} method - the array method to unwatch
-@returns Array
+@returns {Array} the array created with ArrayWrapper
 arr.unWatch(method);
 
 // watchAll
 @type {Function}
 @param {Function} callback - the function that fires upon any array property access
-@returns Array
+@returns {Array} the array created with ArrayWrapper
 arr.watchAll(callback);
 
 // unWatchAll
 @type {Function}
-@returns Array
+@returns {Array} the array created with ArrayWrapper
 arr.unWatchAll();
 
 // callback
 @type {Function}
 @parameter1 {String} the array method that was accessed
 @parameter2 {Object} the custom event that fires
-@context {Array}
+@context {Array} the array created with ArrayWrapper
 function log(method, evt) {
     console.log(`${method} property accessed`, evt, this);
 }
